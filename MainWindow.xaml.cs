@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 
@@ -14,7 +15,7 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    private async void BrowseButton_Click(object sender, RoutedEventArgs e)
+    private void BrowseButton_Click(object sender, RoutedEventArgs e)
     {
         var openFileDialog = new OpenFileDialog
         {
@@ -26,26 +27,31 @@ public partial class MainWindow : Window
         var fileName = openFileDialog.FileName;
         FileNameTextBox.Text = fileName;
 
-        try
-        {
-            await Task.Run(async () =>
+        Task.Run(async () =>
+            {
+                Console.WriteLine($"Creating snapshot: {fileName}");
+                var f = new Video(fileName);
+                var image = await f.CreateScreenshot(TimeSpan.FromMinutes(2));
+
+                Dispatcher.Invoke(() =>
                 {
-                    Console.WriteLine($"Creating snapshot: {fileName}");
-                    var f = new Ffmpeg(fileName);
-                    var image = await f.CreateGifInMemoryAsync(TimeSpan.FromMinutes(2), TimeSpan.FromSeconds(10));
+                    // Use MediaElement for GIF
+                    DisplayMedia.Visibility = Visibility.Visible;
+                    DisplayMedia.LoadedBehavior = MediaState.Manual;
+                    DisplayMedia.Source = new Uri(image, UriKind.Relative);
+                    DisplayMedia.Play();
+                    //new FileInfo(task.Result).Delete();
+                });
+            }
+        );
+    }
 
-                    await Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        DisplayImage.Source = image;
-
-                    });
-                }
-            );
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading image: {ex.Message}");
-        }
+// Handle MediaElement looping for GIFs
+    private void DisplayMedia_MediaEnded(object sender, RoutedEventArgs e)
+    {
+        // Restart the media when it ends (to achieve looping)
+        DisplayMedia.Position = new TimeSpan(0, 0, 0, 0, 1);
+        DisplayMedia.Play();
     }
 
     private void UpButton_Click(object sender, RoutedEventArgs e)

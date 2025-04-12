@@ -7,58 +7,72 @@
         mc:Ignorable="d"
         Title="Image Viewer" Height="600" Width="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <!-- First Row: File selector button and filename textbox -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <Button Name="BrowseButton" Content="Browse..." Width="100" Height="30" Margin="0,0,10,0" Click="BrowseButton_Click"/>
-            <TextBox Name="FileNameTextBox" Width="400" Height="30" IsReadOnly="True" VerticalContentAlignment="Center"/>
-        </StackPanel>
+        <!-- Left Column: All controls -->
+        <Grid Grid.Column="0" Margin="10,10,0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <!-- Second Row: Canvas for image display -->
-        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Margin="10">
-            <Canvas Name="ImageCanvas" Background="LightGray">
-                <Image Name="DisplayImage" Stretch="Uniform"/>
-            </Canvas>
-        </Border>
-
-        <!-- Third Row: Directional buttons -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <Button Name="LeftButton" Width="50" Height="50" Margin="5" Click="LeftButton_Click">
-                <TextBlock Text="←" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Button>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Button Name="UpButton" Grid.Row="0" Width="50" Height="50" Margin="5" Click="UpButton_Click">
-                    <TextBlock Text="↑" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
-                <Button Name="DownButton" Grid.Row="1" Width="50" Height="50" Margin="5" Click="DownButton_Click">
-                    <TextBlock Text="↓" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
-            </Grid>
-            <Button Name="RightButton" Width="50" Height="50" Margin="5" Click="RightButton_Click">
-                <TextBlock Text="→" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Button>
-        </StackPanel>
-
-        <!-- Fourth Row: Angle value textboxes -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
-                <TextBlock Text="X Angle:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                <TextBox Name="XAngleTextBox" Width="80" Height="30" VerticalContentAlignment="Center" TextChanged="AngleTextBox_TextChanged"/>
+            <!-- File selector button and filename textbox -->
+            <StackPanel Grid.Row="0" Orientation="Vertical" Margin="10">
+                <Button Name="BrowseButton" Content="Browse..." Width="100" Height="30" Margin="0,0,0,10"
+                        Click="BrowseButton_Click" HorizontalAlignment="Left" />
+                <TextBox Name="FileNameTextBox" Width="200" Height="30" IsReadOnly="True"
+                         VerticalContentAlignment="Center" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Y Angle:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                <TextBox Name="YAngleTextBox" Width="80" Height="30" VerticalContentAlignment="Center" TextChanged="AngleTextBox_TextChanged"/>
+
+
+            <!-- Directional buttons -->
+            <StackPanel Grid.Row="2" Margin="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Name="UpButton" Grid.Row="0" Grid.Column="1" Width="50" Height="50" Margin="5"
+                            Click="UpButton_Click">
+                        <TextBlock Text="↑" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+
+                    <Button Name="LeftButton" Grid.Row="1" Grid.Column="0" Width="50" Height="50" Margin="5"
+                            Click="LeftButton_Click">
+                        <TextBlock Text="←" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+
+                    <Button Name="RightButton" Grid.Row="1" Grid.Column="2" Width="50" Height="50" Margin="5"
+                            Click="RightButton_Click">
+                        <TextBlock Text="→" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Name="DownButton" Grid.Row="2" Grid.Column="1" Width="50" Height="50" Margin="5"
+                            Click="LeftButton_Click">
+                        <TextBlock Text="D" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                </Grid>
             </StackPanel>
-        </StackPanel>
+        </Grid>
+        <MediaElement Grid.Column="1" Name="DisplayMedia"
+                      Margin="10, 10, 10, 10"
+                      Stretch="Uniform"
+                      Width="{Binding ActualWidth, ElementName=ImageCanvas}"
+                      Height="{Binding ActualHeight, ElementName=ImageCanvas}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Volume="0"
+                      MediaEnded="DisplayMedia_MediaEnded"
+                      Visibility="Collapsed" />
     </Grid>
 </Window>

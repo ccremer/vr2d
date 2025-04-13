@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -27,7 +28,6 @@ public partial class MainWindow : Window
         }
     }
 
-
     public MainWindow()
     {
         InitializeComponent();
@@ -49,6 +49,7 @@ public partial class MainWindow : Window
         HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString();
         VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString();
         PitchTextBox.Text = Video.Pitch.ToString();
+        UpdateArgs();
         CreateSample();
     }
 
@@ -131,6 +132,7 @@ public partial class MainWindow : Window
             seconds = 1;
             PreviewValueTextBox.Text = seconds.ToString();
         }
+
         Task.Run(async () =>
         {
             IsProcessing = true;
@@ -199,6 +201,7 @@ public partial class MainWindow : Window
         Position += TimeSpan.FromSeconds(secondsDelta);
         if (Position.TotalSeconds < 0) Position = TimeSpan.Zero;
         ShowPosition();
+        UpdateArgs();
         CreateSample();
     }
 
@@ -221,6 +224,7 @@ public partial class MainWindow : Window
         if (Video == null) return;
         Video.Pitch += delta;
         PitchTextBox.Text = Video.Pitch.ToString();
+        UpdateArgs();
         CreateScreenShot();
     }
 
@@ -229,6 +233,7 @@ public partial class MainWindow : Window
         if (e.Key != Key.Enter) return;
         if (Video == null) return;
         Video.Pitch = int.TryParse(PitchTextBox.Text, out var value) ? value : Video.Pitch;
+        UpdateArgs();
         CreateScreenShot();
     }
 
@@ -236,6 +241,7 @@ public partial class MainWindow : Window
     {
         if (Video == null) return;
         Video.Yaw += delta;
+        UpdateArgs();
         CreateScreenShot();
     }
 
@@ -281,6 +287,7 @@ public partial class MainWindow : Window
             : Video.HorizontalFieldOfView;
         HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString();
         VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString();
+        UpdateArgs();
         CreateScreenShot();
     }
 
@@ -295,5 +302,10 @@ public partial class MainWindow : Window
         DisplayMedia.Source = null;
         PreviewButton.IsEnabled = true;
         StopPreviewButton.IsEnabled = false;
+    }
+
+    private void UpdateArgs()
+    {
+        CliArgsPreview.Text = Video?.GetArguments(Position) ?? "";
     }
 }

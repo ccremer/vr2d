@@ -55,7 +55,7 @@
                     <!-- Timestamp textbox -->
                     <TextBox Name="TimestampTextBox" Grid.Column="3" Width="100" Height="30" Margin="5,2"
                              Text="00:00:00.0" TextAlignment="Center" VerticalContentAlignment="Center"
-                             LostFocus="TimestampTextBox_LostFocus" KeyDown="TimestampTextBox_KeyDown" />
+                             KeyDown="TimestampTextBox_KeyDown" />
 
                     <!-- Increase buttons -->
                     <Button Grid.Column="4" Content="+0.1s" Width="40" Height="30" Margin="2"
@@ -155,7 +155,7 @@
                     <!-- Preview button -->
                     <Button Grid.Column="2" Name="PreviewButton" Content="Preview" Width="70"
                             Click="PreviewButton_Click" />
-                    
+
                     <Button Grid.Column="3" Name="StopPreviewButton" Click="StopPreviewButton_OnClick" Content="Stop"
                             Width="40">
                     </Button>

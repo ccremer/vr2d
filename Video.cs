@@ -9,53 +9,28 @@ public class Video(string input)
     public int VerticalFieldOfView { get; set; } = 90;
     public int Yaw { get; set; }
     public int Pitch { get; set; }
-    
-    private string? SampleFileName { get; set; }
 
-    public async Task<string> CreateScreenshot()
+    public async Task<string> CreateScreenshot(TimeSpan startPosition)
     {
         const string fileName = "preview.png";
         var arguments =
             FFMpegArguments
-                .FromFileInput(new FileInfo(SampleFileName ?? input)) 
+                .FromFileInput(new FileInfo(input), options => options
+                    .Seek(startPosition)
+                )
                 .OutputToFile(fileName, overwrite: true,
                     options => options
                         .WithConstantRateFactor(22)
+                        .WithFramerate(30)
                         .WithFrameOutputCount(1)
                         .WithCustomArgument(BuildVideoFilterArguments(720))
-                    );
+                );
         Console.WriteLine($"ffmpeg {arguments.Arguments}");
         await arguments.ProcessAsynchronously();
         Console.WriteLine($"Saved to {fileName}");
         return fileName;
     }
 
-    public async Task<VideoResult> CreateSample(TimeSpan startPosition)
-    {
-        try
-        {
-            SampleFileName = null;
-            const string fileName = "sample.mp4";
-            var arguments = FFMpegArguments
-                .FromFileInput(new FileInfo(input), options => options
-                    .Seek(startPosition)
-                    .WithDuration(TimeSpan.FromSeconds(1))
-                ).OutputToFile(fileName, overwrite: true, options => options
-                    .WithFastStart()
-                );
-
-            Console.WriteLine($"ffmpeg {arguments.Arguments}");
-            await arguments.ProcessAsynchronously();
-            SampleFileName = fileName;
-            return new VideoResult(true, null);
-        } catch (Exception ex)
-        {
-            Console.WriteLine($"Error creating sample: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
-            return new VideoResult(false, ex.StackTrace);
-        }
-    }
-    
     public async Task<string> CreatePreview(TimeSpan startPosition, TimeSpan duration)
     {
         try
@@ -106,5 +81,3 @@ public class Video(string input)
         return $"ffmpeg {arguments.Arguments}";
     }
 }
-
-public record VideoResult(bool Success, string? Message);

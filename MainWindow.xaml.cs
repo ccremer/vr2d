@@ -50,42 +50,7 @@ public partial class MainWindow : Window
         VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString();
         PitchTextBox.Text = Video.Pitch.ToString();
         UpdateArgs();
-        CreateSample();
-    }
-
-    private void CreateSample()
-    {
-        if (Video == null) return;
-        if (IsProcessing) return;
-        PreviewButton.IsEnabled = true;
-        Task.Run(async () =>
-            {
-                IsProcessing = true;
-                try
-                {
-                    await Video.CreateSample(Position);
-                    var image = await Video.CreateScreenshot();
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        DisplayMedia.Source = null;
-                        DisplayMedia.Visibility = Visibility.Visible;
-                        DisplayMedia.LoadedBehavior = MediaState.Manual;
-                        DisplayMedia.Source = new Uri(image, UriKind.Relative);
-                        DisplayMedia.Play();
-                    });
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-                finally
-                {
-                    IsProcessing = false;
-                }
-            }
-        );
+        CreateScreenShot();
     }
 
     private void CreateScreenShot()
@@ -98,7 +63,7 @@ public partial class MainWindow : Window
                 IsProcessing = true;
                 try
                 {
-                    var image = await Video.CreateScreenshot();
+                    var image = await Video.CreateScreenshot(Position);
 
                     Dispatcher.Invoke(() =>
                     {
@@ -175,8 +140,6 @@ public partial class MainWindow : Window
 
     private void Increase10sButton_Click(object sender, RoutedEventArgs e) => AdjustTimestamp(10);
 
-    private void TimestampTextBox_LostFocus(object sender, RoutedEventArgs e) => EnterTimestamp();
-
     private void EnterTimestamp()
     {
         if (!TimeSpan.TryParseExact(TimestampTextBox.Text, @"hh\:mm\:ss\.f", null, out var timestamp))
@@ -202,7 +165,7 @@ public partial class MainWindow : Window
         if (Position.TotalSeconds < 0) Position = TimeSpan.Zero;
         ShowPosition();
         UpdateArgs();
-        CreateSample();
+        CreateScreenShot();
     }
 
     private void DisplayMedia_MediaEnded(object sender, RoutedEventArgs e)

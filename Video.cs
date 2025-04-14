@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Drawing;
+using System.IO;
 using FFMpegCore;
 
 namespace VR2D;
@@ -12,7 +13,7 @@ public class Video(string input)
 
     public async Task<string> CreateScreenshot(TimeSpan startPosition)
     {
-        const string fileName = "preview.png";
+        const string fileName = "screenshot.png";
         var arguments =
             FFMpegArguments
                 .FromFileInput(new FileInfo(input), options => options
@@ -23,7 +24,10 @@ public class Video(string input)
                         .WithConstantRateFactor(22)
                         .WithFramerate(30)
                         .WithFrameOutputCount(1)
-                        .WithCustomArgument(BuildVideoFilterArguments(720))
+                        .WithVideoFilters(filter => filter
+                            .VrTo2D(HorizontalFieldOfView, VerticalFieldOfView, Yaw, Pitch)
+                            .Scale(new Size(-1, 720))
+                        )
                 );
         Console.WriteLine($"ffmpeg {arguments.Arguments}");
         await arguments.ProcessAsynchronously();
@@ -44,8 +48,10 @@ public class Video(string input)
                     .WithConstantRateFactor(22)
                     .WithFramerate(30)
                     .WithFastStart()
-                    .WithCustomArgument(
-                        BuildVideoFilterArguments(720)));
+                    .WithVideoFilters(filter => filter
+                        .VrTo2D(HorizontalFieldOfView, VerticalFieldOfView, Yaw, Pitch)
+                        .Scale(new Size(-1, 720))
+                    ));
 
             Console.WriteLine($"ffmpeg {arguments.Arguments}");
             await arguments.ProcessAsynchronously();
@@ -59,13 +65,6 @@ public class Video(string input)
         }
     }
 
-    private string BuildVideoFilterArguments(int scale = 1080)
-    {
-        return $"-vf \"v360=input=equirect:output=flat:ih_fov=180:iv_fov=180:" +
-               $"h_fov={HorizontalFieldOfView}:v_fov={VerticalFieldOfView}:" +
-               $"in_stereo=sbs:yaw={Yaw}:pitch={Pitch},scale=-1:{scale}\"";
-    }
-
     public string GetArguments(TimeSpan startPosition)
     {
         var arguments = FFMpegArguments
@@ -75,8 +74,10 @@ public class Video(string input)
                 .WithConstantRateFactor(22)
                 .WithFramerate(30)
                 .WithFastStart()
-                .WithCustomArgument(
-                    BuildVideoFilterArguments(1080))
+                .WithVideoFilters(filter => filter
+                    .VrTo2D(HorizontalFieldOfView, VerticalFieldOfView, Yaw, Pitch)
+                    .Scale(new Size(-1, 1080))
+                )
             );
         return $"ffmpeg {arguments.Arguments}";
     }

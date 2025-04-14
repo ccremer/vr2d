@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using FFMpegCore;
 
@@ -21,8 +22,7 @@ public class Video(string input)
                 )
                 .OutputToFile(fileName, overwrite: true,
                     options => options
-                        .WithConstantRateFactor(22)
-                        .WithFramerate(30)
+                        .WithConstantRateFactor(28)
                         .WithFrameOutputCount(1)
                         .WithVideoFilters(filter => filter
                             .VrTo2D(HorizontalFieldOfView, VerticalFieldOfView, Yaw, Pitch)
@@ -30,8 +30,11 @@ public class Video(string input)
                         )
                 );
         Console.WriteLine($"ffmpeg {arguments.Arguments}");
+        var timer = new Stopwatch();
+        timer.Start();
         await arguments.ProcessAsynchronously();
-        Console.WriteLine($"Saved to {fileName}");
+        timer.Stop();
+        Console.WriteLine($"Saved to {fileName} in {timer.ElapsedMilliseconds}ms");
         return fileName;
     }
 
@@ -45,7 +48,7 @@ public class Video(string input)
                     .Seek(startPosition)
                     .WithDuration(duration)
                 ).OutputToFile(fileName, overwrite: true, options => options
-                    .WithConstantRateFactor(22)
+                    .WithConstantRateFactor(28)
                     .WithFramerate(30)
                     .WithFastStart()
                     .WithVideoFilters(filter => filter
@@ -54,7 +57,11 @@ public class Video(string input)
                     ));
 
             Console.WriteLine($"ffmpeg {arguments.Arguments}");
+            var timer = new Stopwatch();
+            timer.Start();
             await arguments.ProcessAsynchronously();
+            timer.Stop();
+            Console.WriteLine($"Saved to {fileName} in {timer.ElapsedMilliseconds}ms");
             return fileName;
         }
         catch (Exception ex)

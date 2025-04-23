@@ -77,8 +77,8 @@ public class Video(string input)
         var arguments = FFMpegArguments
             .FromFileInput(new FileInfo(input), options => options
                 .Seek(startPosition)
-            ).OutputToFile("out.mp4", overwrite: false, options => options
-                .WithConstantRateFactor(22)
+            ).OutputToFile("out.mp4", overwrite: true, options => options
+                .WithConstantRateFactor(20)
                 .WithFramerate(30)
                 .WithFastStart()
                 .WithVideoFilters(filter => filter

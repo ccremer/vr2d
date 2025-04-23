@@ -51,6 +51,7 @@ public class Video(string input)
                     .WithConstantRateFactor(28)
                     .WithFramerate(30)
                     .WithFastStart()
+                    .ForcePixelFormat("yuv420p") // WMP can't handle 10-bit colors
                     .WithVideoFilters(filter => filter
                         .VrTo2D(HorizontalFieldOfView, VerticalFieldOfView, Yaw, Pitch)
                         .Scale(new Size(-1, 720))

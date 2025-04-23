@@ -1,7 +1,5 @@
-﻿using System.IO;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -68,8 +66,6 @@ public partial class MainWindow : Window
                     Dispatcher.Invoke(() =>
                     {
                         DisplayMedia.Source = null;
-                        DisplayMedia.Visibility = Visibility.Visible;
-                        DisplayMedia.LoadedBehavior = MediaState.Manual;
                         DisplayMedia.Source = new Uri(image, UriKind.Relative);
                         DisplayMedia.Play();
                     });
@@ -104,14 +100,10 @@ public partial class MainWindow : Window
             try
             {
                 var file = await Video.CreatePreview(Position, TimeSpan.FromSeconds(seconds));
-
-                Dispatcher.Invoke(() =>
+                await Dispatcher.InvokeAsync(() =>
                 {
                     DisplayMedia.Source = null;
-                    DisplayMedia.Visibility = Visibility.Visible;
-                    DisplayMedia.LoadedBehavior = MediaState.Manual;
                     DisplayMedia.Source = new Uri(file, UriKind.Relative);
-                    DisplayMedia.Play();
                     PreviewButton.IsEnabled = false;
                     StopPreviewButton.IsEnabled = true;
                 });
@@ -270,5 +262,12 @@ public partial class MainWindow : Window
     private void UpdateArgs()
     {
         CliArgsPreview.Text = Video?.GetArguments(Position) ?? "";
+    }
+
+    private void DisplayMedia_OnMediaOpened(object sender, RoutedEventArgs e) => DisplayMedia.Play();
+
+    private void DisplayMedia_OnMediaFailed(object? sender, ExceptionRoutedEventArgs e)
+    {
+        Console.WriteLine($"Failed playback: {e.ErrorException.Message}: {e.ErrorException.StackTrace}");
     }
 }

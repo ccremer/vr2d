@@ -182,8 +182,11 @@
                       Height="{Binding ActualHeight, ElementName=ImageCanvas}"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
+                      LoadedBehavior="Manual"
                       Volume="0"
                       MediaEnded="DisplayMedia_MediaEnded"
-                      Visibility="Collapsed" />
+                      MediaOpened="DisplayMedia_OnMediaOpened"
+                      MediaFailed="DisplayMedia_OnMediaFailed"
+                      Visibility="Visible" />
     </Grid>
 </Window>

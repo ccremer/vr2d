@@ -92,8 +92,14 @@
                     </Button>
 
                     <Grid Grid.Row="1" Grid.Column="1">
-                        <TextBox Name="PitchTextBox" Width="40" Height="30" Text="0" TextAlignment="Center"
-                                 VerticalContentAlignment="Center" KeyDown="SetPitch" />
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBox Name="PitchTextBox" Width="40" Height="20" Text="0" TextAlignment="Center" Margin="5"
+                                     VerticalContentAlignment="Top" KeyDown="SetPitch" />    
+                            
+                            <TextBox Name="YawTextBox" Width="40" Height="20" Text="0" TextAlignment="Center"
+                                     VerticalContentAlignment="Bottom" KeyDown="SetYaw" />    
+                        </StackPanel>
+                        
                     </Grid>
 
 

@@ -183,6 +183,15 @@ public partial class MainWindow : Window
         CreateScreenShot();
     }
 
+    private void AdjustYaw(int delta)
+    {
+        if (Video == null) return;
+        Video.Yaw += delta;
+        YawTextBox.Text = Video.Yaw.ToString();
+        UpdateArgs();
+        CreateScreenShot();
+    }
+
     private void SetPitch(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter) return;
@@ -192,14 +201,15 @@ public partial class MainWindow : Window
         CreateScreenShot();
     }
 
-    private void AdjustYaw(int delta)
+    private void SetYaw(object sender, KeyEventArgs e)
     {
+        if (e.Key != Key.Enter) return;
         if (Video == null) return;
-        Video.Yaw += delta;
+        Video.Yaw = int.TryParse(YawTextBox.Text, out var value) ? value : Video.Yaw;
         UpdateArgs();
         CreateScreenShot();
     }
-
+    
     private void ShowPosition() => TimestampTextBox.Text = Position.ToString(@"hh\:mm\:ss\.f");
 
     private void UpdateControlsState()
@@ -270,4 +280,5 @@ public partial class MainWindow : Window
     {
         Console.WriteLine($"Failed playback: {e.ErrorException.Message}: {e.ErrorException.StackTrace}");
     }
+
 }

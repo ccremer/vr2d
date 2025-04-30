@@ -2,7 +2,7 @@
 
 namespace VR2D;
 
-public class VrVideoFilterArgument(int horizontalFieldOfView, int verticalFieldOfView, int yaw = 0, int pitch = 0) : IVideoFilterArgument{
+public class VrVideoFilterArgument(decimal horizontalFieldOfView, decimal verticalFieldOfView, decimal yaw = 0, decimal pitch = 0) : IVideoFilterArgument{
     
     public string Key => "v360";
 

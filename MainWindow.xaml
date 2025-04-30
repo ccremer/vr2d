@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VR2D"
         mc:Ignorable="d"
-        Title="VR2D" Height="800" Width="1200">
+        Title="VR2D" Height="1200" Width="1200">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -20,7 +20,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- File selector button and filename textbox -->
@@ -180,6 +181,40 @@
 
                 </Grid>
             </StackPanel>
+            <StackPanel Grid.Row="6">
+                <TextBlock FontWeight="Bold">Transition</TextBlock>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+        
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="H FoV:" Margin="5,5,10,5" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Name="TransitionHFoVTextBox" Width="80" Height="20" Margin="0,5,5,5" 
+                             Text="90" TextAlignment="Center" VerticalContentAlignment="Center"/>
+        
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="V FoV:" Margin="5,5,10,5" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Name="TransitionVFoVTextBox" Width="80" Height="20" Margin="0,5,5,5" 
+                             Text="90" TextAlignment="Center" VerticalContentAlignment="Center"/>
+        
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Pitch:" Margin="5,5,10,5" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Name="TransitionPitchTextBox" Width="80" Height="20" Margin="0,5,5,5" 
+                             Text="0" TextAlignment="Center" VerticalContentAlignment="Center"/>
+        
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Yaw:" Margin="5,5,10,5" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Name="TransitionYawTextBox" Width="80" Height="20" Margin="0,5,5,5" 
+                             Text="0" TextAlignment="Center" VerticalContentAlignment="Center"/>
+                </Grid>
+
+                <Button Margin="10" Click="CreateTransition">Create</Button>    
+            </StackPanel>
+            
         </Grid>
         <MediaElement Grid.Column="1" Name="DisplayMedia"
                       Margin="10, 10, 10, 10"

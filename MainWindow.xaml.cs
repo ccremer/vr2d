@@ -281,4 +281,37 @@ public partial class MainWindow : Window
         Console.WriteLine($"Failed playback: {e.ErrorException.Message}: {e.ErrorException.StackTrace}");
     }
 
+    private void CreateTransition(object sender, RoutedEventArgs e)
+    {
+        if (Video == null) return;
+        if (IsProcessing) return;
+
+        var pitch = int.TryParse(TransitionPitchTextBox.Text, out var p) ? p : Video.Pitch;
+        var yaw = int.TryParse(TransitionYawTextBox.Text, out var y) ? y : Video.Yaw;
+        var hFoV = int.TryParse(TransitionHFoVTextBox.Text, out var h) ? h : Video.HorizontalFieldOfView;
+        var vFoV = int.TryParse(TransitionVFoVTextBox.Text, out var v) ? v : Video.VerticalFieldOfView;
+        Task.Run(async () =>
+        {
+            IsProcessing = true;
+            try
+            {
+                var fileName = await Video.CreateTransitionFrom(new Video(Video.Input)
+                {
+                    Pitch = pitch,
+                    Yaw = yaw,
+                    HorizontalFieldOfView = hFoV,
+                    VerticalFieldOfView =vFoV,
+                }, Position);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            finally
+            {
+                IsProcessing = false;
+            }
+        });
+    }
 }

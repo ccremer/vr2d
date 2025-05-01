@@ -44,9 +44,9 @@ public partial class MainWindow : Window
         var fileName = openFileDialog.FileName;
         FileNameTextBox.Text = fileName;
         Video = new Video(fileName);
-        HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString();
-        VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString();
-        PitchTextBox.Text = Video.Pitch.ToString();
+        HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString("N2");
+        VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString("N2");
+        PitchTextBox.Text = Video.Pitch.ToString("N2");
         UpdateArgs();
         CreateScreenShot();
     }
@@ -178,7 +178,7 @@ public partial class MainWindow : Window
     {
         if (Video == null) return;
         Video.Pitch += delta;
-        PitchTextBox.Text = Video.Pitch.ToString();
+        PitchTextBox.Text = Video.Pitch.ToString("N2");
         UpdateArgs();
         CreateScreenShot();
     }
@@ -187,7 +187,7 @@ public partial class MainWindow : Window
     {
         if (Video == null) return;
         Video.Yaw += delta;
-        YawTextBox.Text = Video.Yaw.ToString();
+        YawTextBox.Text = Video.Yaw.ToString("N2");
         UpdateArgs();
         CreateScreenShot();
     }
@@ -196,7 +196,7 @@ public partial class MainWindow : Window
     {
         if (e.Key != Key.Enter) return;
         if (Video == null) return;
-        Video.Pitch = int.TryParse(PitchTextBox.Text, out var value) ? value : Video.Pitch;
+        Video.Pitch = decimal.TryParse(PitchTextBox.Text, out var value) ? value : Video.Pitch;
         UpdateArgs();
         CreateScreenShot();
     }
@@ -205,11 +205,11 @@ public partial class MainWindow : Window
     {
         if (e.Key != Key.Enter) return;
         if (Video == null) return;
-        Video.Yaw = int.TryParse(YawTextBox.Text, out var value) ? value : Video.Yaw;
+        Video.Yaw = decimal.TryParse(YawTextBox.Text, out var value) ? value : Video.Yaw;
         UpdateArgs();
         CreateScreenShot();
     }
-    
+
     private void ShowPosition() => TimestampTextBox.Text = Position.ToString(@"hh\:mm\:ss\.f");
 
     private void UpdateControlsState()
@@ -246,12 +246,12 @@ public partial class MainWindow : Window
     {
         if (Video == null) return;
         Video.VerticalFieldOfView =
-            int.TryParse(VerticalFovTextBox.Text, out var v) ? v : Video.VerticalFieldOfView;
-        Video.HorizontalFieldOfView = int.TryParse(HorizontalFovTextBox.Text, out var h)
+            decimal.TryParse(VerticalFovTextBox.Text, out var v) ? v : Video.VerticalFieldOfView;
+        Video.HorizontalFieldOfView = decimal.TryParse(HorizontalFovTextBox.Text, out var h)
             ? h
             : Video.HorizontalFieldOfView;
-        HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString();
-        VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString();
+        HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString("N2");
+        VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString("N2");
         UpdateArgs();
         CreateScreenShot();
     }
@@ -286,10 +286,10 @@ public partial class MainWindow : Window
         if (Video == null) return;
         if (IsProcessing) return;
 
-        var pitch = int.TryParse(TransitionPitchTextBox.Text, out var p) ? p : Video.Pitch;
-        var yaw = int.TryParse(TransitionYawTextBox.Text, out var y) ? y : Video.Yaw;
-        var hFoV = int.TryParse(TransitionHFoVTextBox.Text, out var h) ? h : Video.HorizontalFieldOfView;
-        var vFoV = int.TryParse(TransitionVFoVTextBox.Text, out var v) ? v : Video.VerticalFieldOfView;
+        var pitch = decimal.TryParse(TransitionPitchTextBox.Text, out var p) ? p : Video.Pitch;
+        var yaw = decimal.TryParse(TransitionYawTextBox.Text, out var y) ? y : Video.Yaw;
+        var hFoV = decimal.TryParse(TransitionHFoVTextBox.Text, out var h) ? h : Video.HorizontalFieldOfView;
+        var vFoV = decimal.TryParse(TransitionVFoVTextBox.Text, out var v) ? v : Video.VerticalFieldOfView;
         Task.Run(async () =>
         {
             IsProcessing = true;
@@ -300,7 +300,7 @@ public partial class MainWindow : Window
                     Pitch = pitch,
                     Yaw = yaw,
                     HorizontalFieldOfView = hFoV,
-                    VerticalFieldOfView =vFoV,
+                    VerticalFieldOfView = vFoV,
                 }, Position);
             }
             catch (Exception e)

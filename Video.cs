@@ -8,10 +8,10 @@ namespace VR2D;
 
 public class Video(string input)
 {
-    public int HorizontalFieldOfView { get; set; } = 90;
-    public int VerticalFieldOfView { get; set; } = 90;
-    public int Yaw { get; set; }
-    public int Pitch { get; set; }
+    public decimal HorizontalFieldOfView { get; set; } = 90;
+    public decimal VerticalFieldOfView { get; set; } = 90;
+    public decimal Yaw { get; set; }
+    public decimal Pitch { get; set; }
     public string Input => input;
 
     public async Task<string> CreateScreenshot(TimeSpan startPosition)
@@ -94,16 +94,17 @@ public class Video(string input)
 
     public async Task<string> CreateTransitionFrom(Video initialParameters, TimeSpan endPosition)
     {
-        var fileName = Path.Combine(Path.GetDirectoryName(input) ?? "", $"{Path.GetFileNameWithoutExtension(input)}-transition.mp4");
+        var fileName = Path.Combine(Path.GetDirectoryName(input) ?? "",
+            $"{Path.GetFileNameWithoutExtension(input)}-transition.mp4");
         const int millisecondsPerStep = 50;
         const int partCount = 1000 / millisecondsPerStep;
         var startPosition = endPosition.Subtract(TimeSpan.FromSeconds(1));
         string[] parts = [];
 
-        var pitchDelta = (decimal)(Pitch -initialParameters.Pitch ) / (partCount + 1);
-        var yawDelta = (decimal)(Yaw-initialParameters.Yaw ) / (partCount + 1);
-        var hFoVDelta =(decimal)(  HorizontalFieldOfView-initialParameters.HorizontalFieldOfView) / (partCount + 1);
-        var vFoVDelta = (decimal)( VerticalFieldOfView -initialParameters.VerticalFieldOfView) / (partCount + 1);
+        var pitchDelta = (decimal)(Pitch - initialParameters.Pitch) / (partCount + 1);
+        var yawDelta = (decimal)(Yaw - initialParameters.Yaw) / (partCount + 1);
+        var hFoVDelta = (decimal)(HorizontalFieldOfView - initialParameters.HorizontalFieldOfView) / (partCount + 1);
+        var vFoVDelta = (decimal)(VerticalFieldOfView - initialParameters.VerticalFieldOfView) / (partCount + 1);
         var timer = new Stopwatch();
         timer.Start();
         for (var i = 0; i < partCount; i++)
@@ -112,11 +113,11 @@ public class Video(string input)
             parts = parts.Append(Path.GetFullPath(partName)).ToArray();
             var seek = startPosition;
             startPosition = seek.Add(TimeSpan.FromMilliseconds(millisecondsPerStep));
-            
-            var targetHFoV = Math.Round(initialParameters.HorizontalFieldOfView + hFoVDelta * (i+1), 3);
-            var targetVFoV = Math.Round(initialParameters.VerticalFieldOfView + vFoVDelta * (i+1), 3);
-            var targetYaw =  Math.Round(initialParameters.Yaw + yawDelta * (i+1), 3);
-            var targetPitch =  Math.Round(initialParameters.Pitch + pitchDelta * (i+1), 3);
+
+            var targetHFoV = Math.Round(initialParameters.HorizontalFieldOfView + hFoVDelta * (i + 1), 3);
+            var targetVFoV = Math.Round(initialParameters.VerticalFieldOfView + vFoVDelta * (i + 1), 3);
+            var targetYaw = Math.Round(initialParameters.Yaw + yawDelta * (i + 1), 3);
+            var targetPitch = Math.Round(initialParameters.Pitch + pitchDelta * (i + 1), 3);
             var arguments = FFMpegArguments.FromFileInput(new FileInfo(input), options => options
                 .Seek(seek)
                 .EndSeek(seek.Add(TimeSpan.FromMilliseconds(millisecondsPerStep)))
@@ -132,8 +133,9 @@ public class Video(string input)
             Console.WriteLine($"ffmpeg {arguments.Arguments}");
             await arguments.ProcessAsynchronously();
         }
-        
-        var concatArgs = FFMpegArguments.FromDemuxConcatInput(parts).OutputToFile(fileName, overwrite: true, options => options.WithCustomArgument("-c copy"));
+
+        var concatArgs = FFMpegArguments.FromDemuxConcatInput(parts).OutputToFile(fileName, overwrite: true,
+            options => options.WithCustomArgument("-c copy"));
         Console.WriteLine($"ffmpeg {concatArgs.Arguments}");
         await concatArgs.ProcessAsynchronously();
         timer.Stop();
@@ -142,6 +144,7 @@ public class Video(string input)
         {
             File.Delete(partName);
         }
+
         return fileName;
     }
 }

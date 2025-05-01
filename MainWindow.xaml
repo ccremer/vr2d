@@ -181,7 +181,7 @@
 
                 </Grid>
             </StackPanel>
-            <StackPanel Grid.Row="6">
+            <StackPanel Grid.Row="6" Margin="10">
                 <TextBlock FontWeight="Bold">Transition</TextBlock>
                 <Grid>
                     <Grid.RowDefinitions>

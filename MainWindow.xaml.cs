@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Win32;
@@ -15,6 +16,8 @@ public partial class MainWindow : Window
     private TimeSpan Position { get; set; } = TimeSpan.Zero;
 
     private bool _isProcessing;
+
+    private TextBox? _lastUsedTextBox;
 
     private bool IsProcessing
     {
@@ -44,12 +47,14 @@ public partial class MainWindow : Window
         var fileName = openFileDialog.FileName;
         FileNameTextBox.Text = fileName;
         Video = new Video(fileName);
-        HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString("N2");
-        VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString("N2");
-        PitchTextBox.Text = Video.Pitch.ToString("N2");
+        HorizontalFovTextBox.Text = ToShortenedString(Video.HorizontalFieldOfView);
+        VerticalFovTextBox.Text = ToShortenedString(Video.VerticalFieldOfView);
+        CombinedFovTextBox.Text = ToShortenedString(Video.HorizontalFieldOfView);
         UpdateArgs();
         CreateScreenShot();
     }
+    
+    private String ToShortenedString(decimal value) => value % 1 == 0 ? value.ToString("N0") : value.ToString("N2");
 
     private void CreateScreenShot()
     {
@@ -142,6 +147,7 @@ public partial class MainWindow : Window
 
         TimestampTextBox.Background = null;
         Position = timestamp;
+        _lastUsedTextBox = TimestampTextBox;
         AdjustTimestamp(0);
     }
 
@@ -197,6 +203,7 @@ public partial class MainWindow : Window
         if (e.Key != Key.Enter) return;
         if (Video == null) return;
         Video.Pitch = decimal.TryParse(PitchTextBox.Text, out var value) ? value : Video.Pitch;
+        _lastUsedTextBox = PitchTextBox;
         UpdateArgs();
         CreateScreenShot();
     }
@@ -206,6 +213,7 @@ public partial class MainWindow : Window
         if (e.Key != Key.Enter) return;
         if (Video == null) return;
         Video.Yaw = decimal.TryParse(YawTextBox.Text, out var value) ? value : Video.Yaw;
+        _lastUsedTextBox = YawTextBox;
         UpdateArgs();
         CreateScreenShot();
     }
@@ -220,6 +228,7 @@ public partial class MainWindow : Window
 
             Cursor = _isProcessing ? Cursors.Wait : Cursors.Arrow;
             Controls.IsEnabled = shouldEnable;
+            _lastUsedTextBox?.Focus();
         });
     }
 
@@ -233,12 +242,24 @@ public partial class MainWindow : Window
     private void SetHorizontalFoV(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter) return;
+        _lastUsedTextBox = HorizontalFovTextBox;
         SetFoV();
     }
 
     private void SetVerticalFoV(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter) return;
+        _lastUsedTextBox = VerticalFovTextBox;
+        SetFoV();
+    }
+    
+
+    private void SetCombinedFoV(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter) return;
+        _lastUsedTextBox = CombinedFovTextBox;
+        HorizontalFovTextBox.Text = CombinedFovTextBox.Text;
+        VerticalFovTextBox.Text = CombinedFovTextBox.Text;
         SetFoV();
     }
 
@@ -250,8 +271,6 @@ public partial class MainWindow : Window
         Video.HorizontalFieldOfView = decimal.TryParse(HorizontalFovTextBox.Text, out var h)
             ? h
             : Video.HorizontalFieldOfView;
-        HorizontalFovTextBox.Text = Video.HorizontalFieldOfView.ToString("N2");
-        VerticalFovTextBox.Text = Video.VerticalFieldOfView.ToString("N2");
         UpdateArgs();
         CreateScreenShot();
     }
